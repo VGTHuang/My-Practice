@@ -1,3 +1,5 @@
+//first processing project, a simple solar system with PDE
+
 int speed = 10;
 int celestialBodySize = 14;
 int traceWidth = 1;
