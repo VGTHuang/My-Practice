@@ -1,6 +1,4 @@
-//first processing project, a simple solar system with PDE
-
-int speed = 10;
+int speed = 0;
 int celestialBodySize = 14;
 int traceWidth = 1;
 
@@ -41,6 +39,7 @@ class planet{
     popMatrix();
   }
   public void incrementLoc(){
+    w = speed*sqrt(1/(this.radius*this.radius*this.radius));
     angle = (angle+w)%360;
     x = radius*cos(angle);
     y = radius*sin(angle);
@@ -71,7 +70,6 @@ class satellite{
     this.satelliteColor = mycol;
     this.x = R;
     this.y = 0;
-    println(father.planetRadius/(sunr*celestialBodySize/maxr));
     this.w = speed*sqrt(pow(         (2*father.planetRadius/(sunr*celestialBodySize/maxr*(this.radius)))          ,3));      //assume this
     this.angle = 0;
   }
@@ -88,6 +86,7 @@ class satellite{
     text(satelliteName, fatherX+x+satelliteRadius*1.42, fatherY+y);
   }
   public void incrementLoc(){
+    w = speed*sqrt(pow(         (2*fatherPlanet.planetRadius/(sunr*celestialBodySize/maxr*(this.radius)))          ,3));
     angle = (angle+w)%360;
     x = radius*cos(angle);
     y = radius*sin(angle);
@@ -130,9 +129,6 @@ void setup(){
 void draw(){
   clear();
   drawSystem();
-  /*stroke(255);
-  line(earth.getLoc().x, earth.getLoc().y, venus.getLoc().x, venus.getLoc().y);
-  */
   moon.flushFatherCoordinate();
   phobos.flushFatherCoordinate();
   deimos.flushFatherCoordinate();
@@ -155,6 +151,21 @@ void draw(){
 }
 
 void drawSystem(){
+  fill(200);
+  rect(20, height-60, 80, 40);
+  rect(120, height-60, 80, 40);
+  rect(220, height-60, 80, 40);
+  rect(320, height-60, 80, 40);
+  fill(30);
+  textSize(20);
+  textAlign(CENTER,CENTER);
+  text("Start", 60, height-43);
+  text("Pause", 160, height-43);
+  textSize(13);
+  text("Speed up", 260, height-43);
+  text("Speed down", 360, height-43);
+  
+  
   noStroke();
   fill(suncol);
   ellipse(width/2, height/2, 2*sunr*celestialBodySize/maxr, 2*sunr*celestialBodySize/maxr);
@@ -172,4 +183,19 @@ void drawSystem(){
   ellipse(width/2, height/2, 2*earthR*height/(2*maxR), 2*earthR*height/(2*maxR));
   ellipse(width/2, height/2, 2*marsR*height/(2*maxR), 2*marsR*height/(2*maxR));
   noStroke();
+}
+
+void mouseClicked(){
+  if(mouseX>20&&mouseX<100&&mouseY>height-60&&mouseY<height-20){
+    speed = 10;
+  }
+  else if(mouseX>120&&mouseX<200&&mouseY>height-60&&mouseY<height-20){
+    speed = 0;
+  }
+  if(mouseX>220&&mouseX<300&&mouseY>height-60&&mouseY<height-20){
+    speed += 2;
+  }
+  else if(mouseX>320&&mouseX<400&&mouseY>height-60&&mouseY<height-20){
+    if(speed>2) speed -= 2;
+  }
 }
