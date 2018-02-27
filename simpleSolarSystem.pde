@@ -187,13 +187,13 @@ void drawSystem(){
 
 void mouseClicked(){
   if(mouseX>20&&mouseX<100&&mouseY>height-60&&mouseY<height-20){
-    speed = 10;
+    if(speed == 0) speed = 10;
   }
   else if(mouseX>120&&mouseX<200&&mouseY>height-60&&mouseY<height-20){
     speed = 0;
   }
   if(mouseX>220&&mouseX<300&&mouseY>height-60&&mouseY<height-20){
-    speed += 2;
+    if(speed <= 100) speed += 2;
   }
   else if(mouseX>320&&mouseX<400&&mouseY>height-60&&mouseY<height-20){
     if(speed>2) speed -= 2;
