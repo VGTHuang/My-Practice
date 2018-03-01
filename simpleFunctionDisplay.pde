@@ -2,24 +2,26 @@ class ver{
   public float x, y;
 }
 
-final float ratio = 0.05;
+float ratio = 0.05;
 final float gap = 1;
 final float arrowsize = 20;
 final color coordinatecolor = 130;
+float a = 0;
 
 void setup(){
-  size(500, 500);
-  noLoop();
+  size(500, 300);
+  frameRate(20);
 }
 
 void draw(){
   background(220);
   drawAxis();
   drawFunc();
+  a+=0.05;
 }
 
 float function(float x){
-  return x*x*x-2*x*x-x+1;
+  return (sin(2.4*x+a)+1.3*sin(x-2*a)+0.8*sin(3.7*x-0.7*a));     //type function here
 }
 
 float transformX(float x){
@@ -65,13 +67,13 @@ void drawAxis(){
   }
   numeral = 0;
   for(gridy = height/2 - 1/ratio; gridy>=0; gridy -= 1/ratio){
-    line(0, gridy, height, gridy);
+    line(0, gridy, width, gridy);
     numeral++;
     text(numeral, width/2, gridy);
   }
   numeral = 0;
   for(gridy = height/2 + 1/ratio; gridy<=height; gridy += 1/ratio){
-    line(0, gridy, height, gridy);
+    line(0, gridy, width, gridy);
     numeral--;
     text(numeral, width/2, gridy);
   }
@@ -84,4 +86,9 @@ void drawAxis(){
   fill(coordinatecolor);
   triangle(width, height/2, width-arrowsize, height/2-arrowsize/4, width-arrowsize, height/2+arrowsize/4);
   triangle(width/2, 0, width/2-arrowsize/4, arrowsize, width/2+arrowsize/4, arrowsize);
+}
+
+void mouseWheel(MouseEvent event) {
+  if(ratio>=0.01) ratio += event.getCount()*0.005;
+  if(ratio<0.01&&ratio>0.005&&event.getCount()>0) ratio+=event.getCount()*0.005;
 }
