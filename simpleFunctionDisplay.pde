@@ -46,9 +46,6 @@ void drawFunc(){
 }
 
 void drawAxis(){
-  stroke(coordinatecolor);
-  line(width/2, 0, width/2, height);
-  line(0, height/2, width, height/2);
   float gridx, gridy;
   stroke(127.5+coordinatecolor/2);
   int numeral = 0;
@@ -78,6 +75,11 @@ void drawAxis(){
     numeral--;
     text(numeral, width/2, gridy);
   }
+  
+  stroke(coordinatecolor);
+  line(width/2, 0, width/2, height);
+  line(0, height/2, width, height/2);
+  
   noStroke();
   fill(coordinatecolor);
   triangle(width, height/2, width-arrowsize, height/2-arrowsize/4, width-arrowsize, height/2+arrowsize/4);
