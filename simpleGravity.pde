@@ -1,9 +1,9 @@
-//the initial intention was to make a gravitational simulation. now a weird lissajous thing
+//simple gravity
 
 final color staticObjectCol = color(0, 0, 255);
 final color dynamicObjectCol = color(0, 0, 0);
-final float gravityConstant = 0.00001;
-final float speed = 1;
+final float gravityConstant = 0.01;
+final float speed = 2;
 
 //********************************************************************************************
 class staticObject{
@@ -28,10 +28,10 @@ class staticObject{
 };
 //********************************************************************************************
 class dynamicObject extends staticObject{
-  private float vx;
-  private float vy;
-  private float ax;
-  private float ay;
+  private double vx;
+  private double vy;
+  private double ax;
+  private double ay;
   private staticObject fatherObject = new staticObject(250, 250, 20, 1);
   public dynamicObject(float X, float Y, float VX, float VY, float R, staticObject FATHER){
     this.x = X;
@@ -45,26 +45,28 @@ class dynamicObject extends staticObject{
     this.fatherObject = FATHER;
   }
   
-  private float getGravityX(){
+  private double getGravity(){
     if(fatherObject!=null){
       if(fatherObject.x - x == 0) return 0;
-      else if(fatherObject.x - x > 0)
-        return (gravityConstant*fatherObject.radius*fatherObject.radius*fatherObject.radius*fatherObject.density  /  (fatherObject.x - x)*(fatherObject.x - x));
       else
-        return -(gravityConstant*fatherObject.radius*fatherObject.radius*fatherObject.radius*fatherObject.density  /  (fatherObject.x - x)*(fatherObject.x - x));
-    
+        return (100*gravityConstant*fatherObject.radius*fatherObject.radius*fatherObject.radius*fatherObject.density
+            /((fatherObject.x - x)*(fatherObject.x - x)+(fatherObject.y - y)*(fatherObject.y - y)));
+      }
+    else
+      return 0;
+  }
+  
+  private double getGravityX(){
+    if(fatherObject!=null){
+      return getGravity()*(fatherObject.x - x)/(dist(fatherObject.x, fatherObject.y, x, y));
     }
     else
       return 0;
   }
   
-  private float getGravityY(){
+  private double getGravityY(){
     if(fatherObject!=null){
-      if(fatherObject.y - y == 0) return 0;
-      else if(fatherObject.y - y > 0)
-        return (gravityConstant*fatherObject.radius*fatherObject.radius*fatherObject.radius*fatherObject.density  /  (fatherObject.y - y)*(fatherObject.y - y));
-      else
-        return -(gravityConstant*fatherObject.radius*fatherObject.radius*fatherObject.radius*fatherObject.density  /  (fatherObject.y - y)*(fatherObject.y - y));
+      return getGravity()*(fatherObject.y - y)/(dist(fatherObject.x, fatherObject.y, x, y));
     }
     else
       return 0;
@@ -91,7 +93,7 @@ class dynamicObject extends staticObject{
 
 
 staticObject sun = new staticObject(250, 250, 20, 1);
-dynamicObject planet = new dynamicObject(100, 250, 0, 5, 1, sun);
+dynamicObject planet = new dynamicObject(250, 40, 5, 0,  1, sun);
 
 void setup(){
   size(500, 500);
@@ -99,6 +101,7 @@ void setup(){
 }
 
 void draw(){
+  sun.drawObject();
   planet.drawObject();
   planet.incrementLoc();
 }
