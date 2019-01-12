@@ -25,6 +25,7 @@ public class Su {
 		Su s = new Su();
 		s.initialize();
 		/*
+		// option 1
 		s.insert(1, 2, 2);
 		s.insert(1, 3, 9);
 		s.insert(1, 7, 4);
@@ -42,6 +43,40 @@ public class Su {
 		s.insert(8, 2, 1);
 		s.insert(8, 5, 9);
 		s.insert(9, 8, 6);
+		*/
+		
+		/*
+		// option 2
+		s.insert(1, 1, 5);
+		s.insert(1, 2, 3);
+		s.insert(1, 5, 7);
+		s.insert(2, 1, 6);
+		s.insert(2, 4, 1);
+		s.insert(2, 5, 9);
+		s.insert(2, 6, 5);
+		s.insert(3, 2, 9);
+		s.insert(3, 3, 8);
+		s.insert(3, 8, 6);
+		s.insert(4, 1, 8);
+		s.insert(4, 5, 6);
+		s.insert(4, 9, 3);
+		s.insert(5, 1, 4);
+		s.insert(5, 4, 8);
+		s.insert(5, 6, 3);
+		s.insert(5, 9, 1);
+		s.insert(6, 1, 7);
+		s.insert(6, 5, 2);
+		s.insert(6, 9, 6);
+		s.insert(7, 2, 6);
+		s.insert(7, 7, 2);
+		s.insert(7, 8, 8);
+		s.insert(8, 4, 4);
+		s.insert(8, 5, 1);
+		s.insert(8, 6, 9);
+		s.insert(8, 9, 5);
+		s.insert(9, 5, 8);
+		s.insert(9, 8, 7);
+		s.insert(9, 9, 9);
 		*/
 		s.printBoard();
 
