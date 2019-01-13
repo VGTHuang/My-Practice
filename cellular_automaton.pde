@@ -2,6 +2,7 @@ final short cellnum = 50;
 
 class Cell{
   short live = 0;
+  short lifespan = 0;
   short nextFrame = 0;
   short x, y;
   
@@ -12,7 +13,11 @@ class Cell{
   
   void drawCell(){
     int r = width / cellnum;
-    fill(this.live == 1? 200 : 50);
+    
+    lifespan *= live;
+    lifespan += live;
+    float col = 150 * log(lifespan + 1) + 30;
+    fill(col);
     rect(this.x*r, this.y*r, r, r);
     this.live = this.nextFrame;
   }
