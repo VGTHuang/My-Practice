@@ -1,8 +1,7 @@
 int crow = 1; // current row
-int prerow = 0;
-int cellnum = 300;
+int prerow = 0; // previous row
 
-boolean rule30(int col){
+boolean rule30(int col){  // rule 20
   boolean c1 = brightness(get(col-1, prerow)) > 0?true:false;
   boolean c2 = brightness(get(col, prerow)) > 0?true:false;
   boolean c3 = brightness(get(col+1, prerow)) > 0?true:false;
@@ -16,7 +15,7 @@ boolean rule30(int col){
   else return false;
 }
 
-boolean rule110(int col){
+boolean rule110(int col){  // rule 110
   boolean c1 = brightness(get(col-1, prerow)) > 0?true:false;
   boolean c2 = brightness(get(col, prerow)) > 0?true:false;
   boolean c3 = brightness(get(col+1, prerow)) > 0?true:false;
