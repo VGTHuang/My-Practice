@@ -3,8 +3,6 @@ import java.util.*;
 final int drawType = 1;
 final int sortType = 3;
 
-final int framerate = 30;
-
 final int num = 1000;
 final int edge = 15;
 final float gap = 0.1;
@@ -46,9 +44,9 @@ void drawArrType1(){
   pushMatrix();
   translate(edge, height-edge);
   scale((width-edge*2)/(1.0*width), (-height+edge*2)/(1.0*height));
+  
   // draw patterns
   float wid = 1.0*width/arr.length;
-  
   noStroke();
   for(int i = 0; i < arr.length; i++){
     // colors...
@@ -58,6 +56,7 @@ void drawArrType1(){
       fill(255);
     rect(i*wid, 0, wid+gap, 1.0*height*arr[i]/arr.length);
   }
+  
   popMatrix();
 }
 
@@ -66,9 +65,9 @@ void drawArrType2(){
   translate(width/2, height/2);
   scale((width-edge*2)/(1.0*width), (-height+edge*2)/(1.0*height));
   rotate(PI/2);
+  
   // draw patterns
   float radius = height/2;
-  
   noStroke();
   for(int i = 0; i < arr.length; i++){
     float pos1 = 2*PI*i/arr.length;
@@ -102,35 +101,29 @@ void initArr2(){
 void setup(){
   size(800, 500);
   //noLoop();
-  frameRate(framerate);
+  frameRate(30);
   initArr();
   randomize();
   noSmooth();
   background(0);
+  switch(sortType){
+    case 1:
+    thread("bubble");
+    break;
+    case 2:
+    thread("insertion");
+    break;
+    case 3:
+    thread("cocktail");
+    break;
+    default:
+    thread("bubble");
+    break;
+  }
 }
 
 void draw(){
   drawArr(drawType);
-  
-  switch(sortType){
-    case 1:
-      for(int i = 0; i < arr.length/2-7; i++){
-        stupidInsert();
-      }
-      break;
-    case 2:
-      for(int i = 0; i < arr.length/2-7; i++){
-        stupidBubble();
-      }
-      break;
-    case 3:
-      for(int i = 0; i < arr.length/2-7; i++){
-        stupidCocktail();
-      }
-      break;
-    default:
-      break;
-  }
   
   if(finished){
     drawArr(drawType);
@@ -139,93 +132,89 @@ void draw(){
 }
 
 int ind = 0;
-int hilim = num - 1;
-boolean flag = false;
 boolean finished = false;
 long cmpCount = 0;
 
-void stupidBubble(){
-  if(finished) return;
-  if(ind == hilim){
-    if(hilim == 0){
+void bubble(){
+  ind = 0;
+  int hi = arr.length - 1;
+  boolean flag;
+  while(hi != 0){
+    flag = false;
+    for(ind = 0; ind < hi; ind++){
+      if(cmpCount%(num/30) == 0) delay(1);
+      cmpCount++;
+      if(arr[ind] > arr[ind+1]){
+        swapArrElem(ind, ind+1);
+        flag = true;
+      }
+    }
+    if(!flag){
       finished = true;
       return;
     }
-    else{
-      ind = 0;
+    hi--;
+  }
+  finished = true;
+  return;
+}
+
+void insertion(){
+  ind = 0;
+  int hi = arr.length - 1;
+  int minInd;
+  while(hi != 0){
+    minInd = 0;
+    for(ind = 0; ind <= hi; ind++){
+      if(cmpCount%(num/30) == 0) delay(1);
+      cmpCount++;
+      if(arr[ind] > arr[minInd]) minInd = ind;
+    }
+    swapArrElem(minInd, hi);
+    hi--;
+  }
+  finished = true;
+  return;
+}
+
+void cocktail(){
+  ind = 0;
+  boolean fr = true, flag = true;
+  int lo = 0, hi = arr.length - 1;
+  while(hi - lo >= 1){
+    if(ind == hi && fr || ind == lo && !fr){
+      fr = !fr;
+      if(ind == hi){
+        hi--;
+        ind--;
+      }
+      else{
+        lo++;
+        ind++;
+      }
+      if(!flag){
+        finished = true;
+        return;
+      }
       flag = false;
-      hilim--;
-    }
-  }
-  else{
-    cmpCount++;
-    if(arr[ind] > arr[ind+1]){
-      swapArrElem(ind, ind+1);
-    }
-    ind++;
-  }
-}
-
-int lolim = 0;
-boolean fr = true;
-
-void stupidCocktail(){
-  if(finished || hilim-lolim <= 1){
-    finished = true;
-    return;
-  }
-  if(fr && ind == hilim) {
-    if(!flag) finished = true;
-    flag = false;
-    fr = false;
-    hilim-=1;
-    ind-=1;
-  }
-  else if(!fr && ind == lolim) {
-    if(!flag) finished = true;
-    flag = false;
-    fr = true;
-    lolim+=1;
-    ind+=1;
-  }
-  else{
-    cmpCount++;
-    if(fr){
-      if(arr[ind]>arr[ind+1]) {
-        flag = true;
-        swapArrElem(ind, ind+1);
-      }
-      ind++;
-    }
-    else{
-      if(arr[ind]<arr[ind-1]) {
-        flag = true;
-        swapArrElem(ind, ind-1);
-      }
-      ind--;
-    }
-    return;
-  }
-}
-
-
-int minInd = 0;
-void stupidInsert(){
-  if(lolim == arr.length-1){
-    finished = true;
-    return;
-  }
-  else{
-    if(ind == arr.length){
-      swapArrElem(lolim, minInd);
-      lolim++;
-      ind = lolim;
-      minInd = ind;
     }
     else{
       cmpCount++;
-      if(arr[ind] < arr[minInd]) minInd = ind;
-      ind++;
+      if(cmpCount%(num/30) == 0) delay(1);
+      if(fr){
+        if(arr[ind] > arr[ind+1]){
+          swapArrElem(ind, ind+1);
+          flag = true;
+        }
+        ind++;
+      }
+      else{
+        if(arr[ind] < arr[ind-1]){
+          swapArrElem(ind, ind-1);
+          flag = true;
+        }
+        ind--;
+      }
     }
   }
 }
