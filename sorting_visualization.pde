@@ -1,7 +1,7 @@
 import java.util.*;
 
-final int drawType = 1;
-final int sortType = 3;
+final int drawType = 2;
+final int sortType = 4;
 
 final int num = 1000;
 final int edge = 15;
@@ -44,9 +44,9 @@ void drawArrType1(){
   pushMatrix();
   translate(edge, height-edge);
   scale((width-edge*2)/(1.0*width), (-height+edge*2)/(1.0*height));
-  
   // draw patterns
   float wid = 1.0*width/arr.length;
+  
   noStroke();
   for(int i = 0; i < arr.length; i++){
     // colors...
@@ -56,7 +56,6 @@ void drawArrType1(){
       fill(255);
     rect(i*wid, 0, wid+gap, 1.0*height*arr[i]/arr.length);
   }
-  
   popMatrix();
 }
 
@@ -65,9 +64,9 @@ void drawArrType2(){
   translate(width/2, height/2);
   scale((width-edge*2)/(1.0*width), (-height+edge*2)/(1.0*height));
   rotate(PI/2);
-  
   // draw patterns
   float radius = height/2;
+  
   noStroke();
   for(int i = 0; i < arr.length; i++){
     float pos1 = 2*PI*i/arr.length;
@@ -116,10 +115,14 @@ void setup(){
     case 3:
     thread("cocktail");
     break;
+    case 4:
+    thread("shell");
+    break;
     default:
     thread("bubble");
     break;
   }
+  
 }
 
 void draw(){
@@ -177,6 +180,21 @@ void insertion(){
   return;
 }
 
+void insertionRange(int from, int to){
+  int minInd;
+  while(to != from){
+    minInd = from;
+    for(ind = from; ind <= to; ind++){
+      if(cmpCount%(num/30) == 0) delay(1);
+      cmpCount++;
+      if(arr[ind] > arr[minInd]) minInd = ind;
+    }
+    swapArrElem(minInd, to);
+    to--;
+  }
+  return;
+}
+
 void cocktail(){
   ind = 0;
   boolean fr = true, flag = true;
@@ -217,4 +235,37 @@ void cocktail(){
       }
     }
   }
+}
+
+int[] ciura = {1, 4, 10, 23, 57, 132, 301, 701};
+
+void shell(){
+  int gapnum;
+  for(gapnum = 0; gapnum < ciura.length-1; gapnum++){
+    if(ciura[gapnum+1] >= arr.length) break;
+  }
+  int gap = ciura[gapnum];
+  int minInd, lo;
+  while(gapnum >= 1){
+    gap = ciura[gapnum];
+    ind = 0;
+    for(int start = 0; start < gap; start++){
+      lo = start;
+      while(lo < arr.length){
+        minInd = lo;
+        for(ind = lo; ind < arr.length; ind += gap){
+          cmpCount++;
+          if(cmpCount%(num/30) == 0) delay(1);
+          if(arr[ind] < arr[minInd]) minInd = ind;
+        }
+        swapArrElem(minInd, lo);
+        lo += gap;
+      }
+    }
+    gapnum--;
+  }
+  for(int i = 0; i+8 < arr.length; i+=1)
+    insertionRange(i, i+8);
+  finished = true;
+  return;
 }
