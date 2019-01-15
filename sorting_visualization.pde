@@ -1,12 +1,16 @@
 import java.util.*;
 
-final int drawType = 2;
+final int drawType = 1;
 final int sortType = 7;
 
-final int num = 1000;
+final int shuffleType = 4;
+
+final int delayTime = 1;
+final int delayGap = 30;
+
+final int num = 500;
 final int edge = 15;
 final float gap = 0.1;
-
 
 int[] arr;
 
@@ -16,14 +20,59 @@ void swapArrElem(int i, int j){
   arr[j] = temp;
 }
 
-void randomize(){
+void shuffleArr(){
+  switch(shuffleType){
+    case 1:
+    randomizeArr();
+    break;
+    case 2:
+    slightRandomizeArr();
+    break;
+    case 3:
+    reverseArr();
+    break;
+    case 4:
+    shiftArr();
+    break;
+    default:
+    break;
+  }
+  delay(1000);
+}
+
+void randomizeArr(){
   Random rand = new Random();
   for(int i = 0; i < arr.length; i++){
-    delay(1);
+    delay(delayTime);
     int randPos = rand.nextInt(arr.length);
     swapArrElem(i, randPos);
   }
-  delay(1000);
+}
+
+void slightRandomizeArr(){
+  Random rand = new Random();
+  for(int i = 0; i < arr.length/10; i++){
+    int randPos1 = rand.nextInt(arr.length);
+    int randPos2 = rand.nextInt(arr.length);
+    swapArrElem(randPos1, randPos2);
+  }
+}
+
+void reverseArr(){
+  for(int i = 0; i < arr.length/2; i++){
+    swapArrElem(i, arr.length-1-i);
+  }
+}
+
+void shiftArr(){
+  reverseArr();
+  int piv = arr.length/100;
+  for(int i = 0; i <= piv/2; i++){
+    swapArrElem(i, piv-i);
+  }
+  for(int i = 0; i < (arr.length-piv-1)/2; i++){
+    swapArrElem(i+piv+1, arr.length-1-i);
+  }
 }
 
 void drawArr(int type){
@@ -39,7 +88,6 @@ void drawArr(int type){
     default:
     break;
   }
-  
 }
 
 void drawArrType1(){
@@ -149,14 +197,14 @@ boolean finished = false;
 long cmpCount = 0;
 
 void bubble(){
-  randomize();
+  shuffleArr();
   ind = 0;
   int hi = arr.length - 1;
   boolean flag;
   while(hi != 0){
     flag = false;
     for(ind = 0; ind < hi; ind++){
-      if(cmpCount%(num/30) == 0) delay(1);
+      if(cmpCount%delayGap == 0) delay(delayTime);
       cmpCount++;
       if(arr[ind] > arr[ind+1]){
         swapArrElem(ind, ind+1);
@@ -174,14 +222,14 @@ void bubble(){
 }
 
 void insertion(){
-  randomize();
+  shuffleArr();
   ind = 0;
   int hi = arr.length - 1;
   int minInd;
   while(hi != 0){
     minInd = 0;
     for(ind = 0; ind <= hi; ind++){
-      if(cmpCount%(num/30) == 0) delay(1);
+      if(cmpCount%delayGap == 0) delay(delayTime);
       cmpCount++;
       if(arr[ind] > arr[minInd]) minInd = ind;
     }
@@ -193,11 +241,13 @@ void insertion(){
 }
 
 void insertionRange(int from, int to){
+  if(from >= arr.length) return;
+  else if(to >= arr.length) to = arr.length-1;
   int minInd;
   while(to != from){
     minInd = from;
     for(ind = from; ind <= to; ind++){
-      if(cmpCount%(num/30) == 0) delay(1);
+      if(cmpCount%delayGap == 0) delay(delayTime);
       cmpCount++;
       if(arr[ind] > arr[minInd]) minInd = ind;
     }
@@ -208,7 +258,7 @@ void insertionRange(int from, int to){
 }
 
 void cocktail(){
-  randomize();
+  shuffleArr();
   ind = 0;
   boolean fr = true, flag = true;
   int lo = 0, hi = arr.length - 1;
@@ -231,7 +281,7 @@ void cocktail(){
     }
     else{
       cmpCount++;
-      if(cmpCount%(num/30) == 0) delay(1);
+      if(cmpCount%delayGap == 0) delay(delayTime);
       if(fr){
         if(arr[ind] > arr[ind+1]){
           swapArrElem(ind, ind+1);
@@ -248,12 +298,14 @@ void cocktail(){
       }
     }
   }
+  finished = true;
+  return;
 }
 
 int[] ciura = {1, 4, 10, 23, 57, 132, 301, 701};
 
 void shell(){
-  randomize();
+  shuffleArr();
   int gapnum;
   for(gapnum = 0; gapnum < ciura.length-1; gapnum++){
     if(ciura[gapnum+1] >= arr.length) break;
@@ -269,7 +321,7 @@ void shell(){
         minInd = lo;
         for(ind = lo; ind < arr.length; ind += gap){
           cmpCount++;
-          if(cmpCount%(num/30) == 0) delay(1);
+          if(cmpCount%delayGap == 0) delay(delayTime);
           if(arr[ind] < arr[minInd]) minInd = ind;
         }
         swapArrElem(minInd, lo);
@@ -279,15 +331,25 @@ void shell(){
     gapnum--;
   }
   
-  for(int i = 0; i+7 < arr.length; i+=1)
-    insertionRange(i, i+7);
-    
+  lo = 0;
+  while(lo < arr.length){
+    minInd = lo;
+    for(ind = lo; ind < lo + 10 && ind < arr.length; ind ++){
+      cmpCount++;
+      if(cmpCount%delayGap == 0) delay(delayTime);
+      if(arr[ind] < arr[minInd]) minInd = ind;
+    }
+    swapArrElem(minInd, lo);
+    lo++;
+  }
+  
+  
   finished = true;
   return;
 }
 
 void merge(){
-  randomize();
+  shuffleArr();
   int[] store = new int[arr.length];
   mergeSub(0, arr.length-1, store);
   finished = true;
@@ -296,10 +358,6 @@ void merge(){
 
 void mergeSub(int lo, int hi, int[] store){
   if(hi - lo < 1) return;
-  else if(hi - lo <= 4){
-    insertionRange(lo, hi);
-    return;
-  }
   else{
     int mid = (hi + lo) / 2;
     mergeSub(lo, mid, store);
@@ -317,7 +375,8 @@ void mergeSub(int lo, int hi, int[] store){
     while(arr2 <= hi)
       store[arr3++] = arr[arr2++];
     for(int i = lo; i <= hi; i++){
-      delay(1);
+      ind = i;
+      delay(delayTime);
       arr[i] = store[i];
     }
     return;
@@ -325,7 +384,7 @@ void mergeSub(int lo, int hi, int[] store){
 }
 
 void fast(){
-  randomize();
+  shuffleArr();
   fastRec(0, arr.length-1);
   finished = true;
   return;
@@ -333,12 +392,27 @@ void fast(){
 
 void fastRec(int lo, int hi){
   if(hi - lo <= 0) return;
+  
+  // get piv
+  if(arr[lo] > arr[hi]){
+    if(arr[lo] > arr[(lo+hi)/2]){
+      if(arr[(lo+hi)/2] > arr[hi]) swapArrElem(lo, (lo+hi)/2);
+      else swapArrElem(lo, hi);
+    }
+  }
+  else{
+    if(arr[lo] < arr[(lo+hi)/2]){
+      if(arr[(lo+hi)/2] < arr[hi]) swapArrElem(lo, (lo+hi)/2);
+      else swapArrElem(lo, hi);
+    }
+  }
+  
   int piv = arr[lo];
   int loarr = lo, hiarr = hi;
   while(loarr < hiarr){
     while(loarr < hiarr && arr[hiarr] >= piv){
       cmpCount++;
-      delay(1);
+      delay(delayTime);
       ind = hiarr;
       hiarr--;
     }
@@ -346,7 +420,7 @@ void fastRec(int lo, int hi){
     
     while(loarr < hiarr && arr[loarr] <= piv){
       cmpCount++;
-      delay(1);
+      delay(delayTime);
       ind = loarr;
       loarr++;
     }
@@ -363,7 +437,7 @@ void heapRec(int par, int hi){
   if(2*(par+1)-1 == hi){
     ind = par;
     cmpCount++;
-    delay(1);
+    delay(delayTime);
     if(arr[2*(par+1)-1] < arr[par]){
       swapArrElem(2*(par+1)-1, par);
     }
@@ -372,7 +446,7 @@ void heapRec(int par, int hi){
   else{
     ind = par;
     cmpCount++;
-    delay(1);
+    delay(delayTime);
     if(arr[2*(par+1)-1] > arr[par] && arr[2*(par+1)-1] > arr[2*(par+1)]){
       swapArrElem(2*(par+1)-1, par);
       heapRec(2*(par+1)-1, hi);
@@ -386,8 +460,7 @@ void heapRec(int par, int hi){
 }
 
 void heap(){
-  randomize();
-  
+  shuffleArr();
   // build heap
   for(int i = (arr.length+1)/2-1; i >= 0; i--){
     heapRec(i, arr.length-1);
